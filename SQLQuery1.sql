@@ -17,3 +17,7 @@ CREATE TABLE GunlukFiyatlar (
     Kapanis DECIMAL(18, 2),
     Hacim BIGINT
 );
+
+INSERT INTO Sirketler (SirketKodu, SirketAdi, Sektor)
+VALUES ('THYAO', 'Turk Hava Yollari', 'Ulasim');
+
