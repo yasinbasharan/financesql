@@ -1,4 +1,5 @@
 -- 1. Şirket Bilgileri Tablosu
+---- 1. Company Information Table
 CREATE TABLE Sirketler (
     SirketID INT PRIMARY KEY IDENTITY(1,1),
     SirketKodu NVARCHAR(10) NOT NULL,
@@ -7,6 +8,7 @@ CREATE TABLE Sirketler (
 );
 
 -- 2. Günlük Fiyatlar Tablosu (OHLC)
+---- 2. Daily Price Chart (OHLC)
 CREATE TABLE GunlukFiyatlar (
     VeriID INT PRIMARY KEY IDENTITY(1,1),
     SirketID INT FOREIGN KEY REFERENCES Sirketler(SirketID),
@@ -21,3 +23,28 @@ CREATE TABLE GunlukFiyatlar (
 INSERT INTO Sirketler (SirketKodu, SirketAdi, Sektor)
 VALUES ('THYAO', 'Turk Hava Yollari', 'Ulasim');
 
+USE BorsaDB;
+GO
+
+-- THYAO_5Y tablosundaki verileri asıl yerlerine gönderiyoruz
+---- We are sending the data from the THYAO_5Y table to its original locations.
+INSERT INTO GunlukFiyatlar (SirketID, Tarih, Acilis, Yuksek, Dusuk, Kapanis, Hacim)
+SELECT 
+    1, -- THY'nin ID'si
+    [Date], 
+    [Open], 
+    [High], 
+    [Low], 
+    [Close], 
+    [Volume]
+FROM [THYAO_5Y];
+
+SELECT TOP 10 * FROM GunlukFiyatlar;
+
+--Veritabanına göre THY son 5 yılda en yüksek hangi fiyattan kapanış yapmış?
+--According to the database, what was the highest closing price of Turkish Airlines in the last 5 years?
+
+SELECT TOP 1 Tarih, Kapanis, Hacim 
+FROM GunlukFiyatlar 
+WHERE SirketID = 1 
+ORDER BY Kapanis DESC;
