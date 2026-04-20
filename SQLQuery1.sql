@@ -130,3 +130,48 @@ SELECT
 FROM GunlukFiyatlar G
 JOIN Sirketler S ON G.SirketID = S.SirketID
 GROUP BY S.SirketAdi;
+
+
+--RYANAIR added the Sirketler and GunlukFiyatlar lists.
+USE BorsaDB;
+GO
+
+INSERT INTO Sirketler (SirketKodu, SirketAdi, Sektor)
+VALUES ('RYAAY', 'Ryanair Holdings plc', 'Ulasim');
+
+SELECT * FROM Sirketler;
+
+
+USE BorsaDB;
+GO
+
+-- RYAAY_5Y tablosundaki verileri GunlukFiyatlar'a taşıyoruz
+---- We are transferring the data from the RYAAY_5Y table to GunlukFiyatlar.
+INSERT INTO GunlukFiyatlar (SirketID, Tarih, Acilis, Yuksek, Dusuk, Kapanis, Hacim)
+SELECT 
+    4, -- RYANAIR'un Sirketler tablosundaki ID'si
+    ---- RYANAIR' ID in the Companies table
+    [Date], 
+    [Open], 
+    [High], 
+    [Low], 
+    [Close], 
+    [Volume]
+FROM [RYAAY_5Y];
+
+SELECT SirketID, COUNT(*) AS ToplamGunSayisi
+FROM GunlukFiyatlar
+GROUP BY SirketID;
+
+
+--A quick list check after Ryanair.
+SELECT 
+    S.SirketAdi, 
+    MIN(G.Kapanis) AS EnDusukFiyat, 
+    MAX(G.Kapanis) AS EnYuksekFiyat, 
+    AVG(G.Kapanis) AS OrtalamaFiyat
+FROM GunlukFiyatlar G
+JOIN Sirketler S ON G.SirketID = S.SirketID
+GROUP BY S.SirketAdi;
+
+
