@@ -48,3 +48,21 @@ SELECT TOP 1 Tarih, Kapanis, Hacim
 FROM GunlukFiyatlar 
 WHERE SirketID = 1 
 ORDER BY Kapanis DESC;
+
+DROP TABLE THYAO_5Y;
+
+USE BorsaDB;
+GO
+
+SELECT TOP 1 Tarih, Kapanis, Hacim 
+FROM GunlukFiyatlar 
+WHERE SirketID = 1  -- THY'nin ID'si 1 olduğu için bunu ekliyoruz
+ORDER BY Kapanis DESC;
+
+USE BorsaDB;
+GO
+
+-- En güncel veriyi en üstte görmek için
+---- To see the most up-to-date data at the top
+SELECT * FROM GunlukFiyatlar
+ORDER BY Tarih DESC; 
