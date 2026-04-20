@@ -100,3 +100,21 @@ SELECT
     [Close], 
     [Volume]
 FROM [PGSUS_5Y];
+
+SELECT SirketID, COUNT(*) AS ToplamGunSayisi
+FROM GunlukFiyatlar
+GROUP BY SirketID;
+
+
+
+
+--We are entering a stock market comparison analysis query.
+SELECT 
+    S.SirketAdi, 
+    MIN(G.Kapanis) AS EnDusukFiyat, 
+    MAX(G.Kapanis) AS EnYuksekFiyat, 
+    AVG(G.Kapanis) AS OrtalamaFiyat
+FROM GunlukFiyatlar G
+JOIN Sirketler S ON G.SirketID = S.SirketID
+GROUP BY S.SirketAdi;
+
