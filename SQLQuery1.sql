@@ -175,3 +175,36 @@ JOIN Sirketler S ON G.SirketID = S.SirketID
 GROUP BY S.SirketAdi;
 
 
+USE BorsaDB;
+GO
+
+-- 1. Önce Ryanair'in ID'sini garantiye alalım (Listedeki isme göre)
+DECLARE @ID int;
+SELECT @ID = SirketID FROM Sirketler WHERE SirketKodu = 'RYAAY';
+
+-- 2. Hatalı (aşırı düşük) tüm verileri temizle. 
+-- Grafik 35.000'lerde geziyorsa, 1000'in altındaki her şey hatadır.
+DELETE FROM GunlukFiyatlar 
+WHERE SirketID = @ID AND Kapanis < 1000;
+
+-- 3. Mükerrerleri (Aynı gün iki kayıt) tarihteki saat farkı olsa bile siler:
+WITH CTE AS (
+    SELECT *, ROW_NUMBER() OVER (
+        PARTITION BY SirketID, CAST(Tarih AS DATE) 
+        ORDER BY Kapanis DESC -- Yüksek olan kalsın, hatalı düşük olan gitsin
+    ) AS SatirNo
+    FROM GunlukFiyatlar
+    WHERE SirketID = @ID
+)
+DELETE FROM CTE WHERE SatirNo > 1;
+
+-- 1. ADIM: 10.000'den büyük olanları 100'e bölüp küsüratlarını geri veriyoruz (Örn: 31725 -> 317.25)
+UPDATE GunlukFiyatlar
+SET Kapanis = CAST(Kapanis AS FLOAT) / 100.0
+WHERE Kapanis >= 10000;
+
+-- 2. ADIM: 1000 ile 10000 arasında olanları 10'a bölüyoruz (Örn: 3195 -> 319.5)
+-- Havacılık hisseleri 1000 TL'yi çok nadir geçer, o yüzden 1000 üstü kesin hatalıdır.
+UPDATE GunlukFiyatlar
+SET Kapanis = CAST(Kapanis AS FLOAT) / 10.0
+WHERE Kapanis >= 1000 AND Kapanis < 10000;
