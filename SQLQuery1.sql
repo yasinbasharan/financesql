@@ -118,3 +118,15 @@ FROM GunlukFiyatlar G
 JOIN Sirketler S ON G.SirketID = S.SirketID
 GROUP BY S.SirketAdi;
 
+
+
+--We are comparing the performance of these two companies over the last 5 years.
+
+SELECT 
+    S.SirketAdi,
+    MIN(G.Kapanis) AS BaslangicFiyati,
+    MAX(G.Kapanis) AS ZirveFiyati,
+    CAST((MAX(G.Kapanis) - MIN(G.Kapanis)) / MIN(G.Kapanis) * 100 AS DECIMAL(18,2)) AS ToplamBuyumeYuzdesi
+FROM GunlukFiyatlar G
+JOIN Sirketler S ON G.SirketID = S.SirketID
+GROUP BY S.SirketAdi;
