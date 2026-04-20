@@ -66,3 +66,37 @@ GO
 ---- To see the most up-to-date data at the top
 SELECT * FROM GunlukFiyatlar
 ORDER BY Tarih DESC; 
+
+
+USE BorsaDB;
+GO
+
+INSERT INTO Sirketler (SirketKodu, SirketAdi, Sektor)
+VALUES ('PGSUS', 'Pegasus Hava Tasimaciligi', 'Ulasim');
+
+-- Bakalım 2 numara olmuş mu?
+SELECT * FROM Sirketler;
+
+--We created Pegasus's identity card.
+USE BorsaDB;
+GO
+INSERT INTO Sirketler (SirketKodu, SirketAdi, Sektor)
+VALUES ('PGSUS', 'Pegasus Hava Tasimaciligi', 'Ulasim');
+
+
+USE BorsaDB;
+GO
+
+-- PGSUS_5Y tablosundaki verileri GunlukFiyatlar'a taşıyoruz
+---- We are transferring the data from the PGSUS_5Y table to GunlukFiyatlar.
+INSERT INTO GunlukFiyatlar (SirketID, Tarih, Acilis, Yuksek, Dusuk, Kapanis, Hacim)
+SELECT 
+    2, -- Pegasus'un Sirketler tablosundaki ID'si
+    ---- Pegasus' ID in the Companies table
+    [Date], 
+    [Open], 
+    [High], 
+    [Low], 
+    [Close], 
+    [Volume]
+FROM [PGSUS_5Y];
